@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shopywell/View%20Model/Provider/productprovider.dart';
 import 'package:shopywell/View%20Model/Util/colors.dart';
+import 'package:shopywell/View/Screens/Home%20Screen/UI/homescreen.dart';
+import 'package:shopywell/View/Widgets/bottombar.dart';
 // import 'package:shopywell/View/Screens/Payment/payment_success_screen.dart';
 
 class PaymentButton extends StatelessWidget {
@@ -30,15 +32,54 @@ class PaymentButton extends StatelessWidget {
       // Show Payment Sheet
       await Stripe.instance.presentPaymentSheet();
 
-      // On Successful Payment
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => PaymentSuccessScreen()),
+      // Clear Cart after Payment Success
+      Provider.of<ProductProvider>(context, listen: false).clearCart();
+
+      // Show Success AlertDialog
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Util().whiteColor,
+          title:
+              Icon(Icons.check_circle, color: Util().primaeryColor, size: 60),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Payment done successfully.",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Util().blackColor,
+                  fontFamily: "Montserrat Medium",
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => BottomNavBarScreen()),
+                  (route) => false, // Remove all previous routes
+                );
+              },
+              child: Text(
+                "OK",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Montserrat Medium",
+                    color: Util().blackColor),
+              ),
+            ),
+          ],
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Payment failed: $e")),
       );
+      print("Payment failed: $e");
     }
   }
 
@@ -137,40 +178,6 @@ class PaymentButton extends StatelessWidget {
                 ),
               );
       },
-    );
-  }
-}
-// import 'package:flutter/material.dart';
-
-class PaymentSuccessScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 80),
-            SizedBox(height: 20),
-            Text(
-              "Payment Successful!",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Thank you for your purchase.",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Go to Home"),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

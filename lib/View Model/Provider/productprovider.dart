@@ -34,4 +34,10 @@ class ProductProvider with ChangeNotifier {
     _cartProducts.add(product);
     notifyListeners();
   }
+
+  // Clear cart after successful payment
+  void clearCart() {
+    _cartProducts.clear();
+    notifyListeners();
+  }
 }

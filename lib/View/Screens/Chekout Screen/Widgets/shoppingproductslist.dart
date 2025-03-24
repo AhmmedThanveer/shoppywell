@@ -21,7 +21,7 @@ class ShoppingProductsList extends StatelessWidget {
             ? const Center(
                 child: Padding(
                   padding: EdgeInsets.only(top: 60),
-                  child: Text("No items in the cart"),
+                  child: Text("No items in the checkout"),
                 ),
               )
             : Column(
